@@ -1,0 +1,16 @@
+{
+  "name": "payment-redirect-server",
+  "version": "1.0.0",
+  "description": "A server to handle payment redirects.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

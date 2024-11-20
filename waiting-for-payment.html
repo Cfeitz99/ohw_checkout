@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting to Payment</title>
+  <!-- Meta Tags for Responsive Design -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <!-- Font Face for Axiforma and Embedded CSS -->
+  <style>
+    /* Font Face for Axiforma */
+    @font-face {
+      font-family: 'Axiforma';
+      src: url('fonts/Axiforma-Regular.woff2') format('woff2'),
+           url('fonts/Axiforma-Regular.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'Axiforma';
+      src: url('fonts/Axiforma-Bold.woff2') format('woff2'),
+           url('fonts/Axiforma-Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    /* Embedded CSS Styles */
+
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: 'Axiforma', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: url('images/background.jpg') center center / cover no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(31,60,78,0.8), rgba(131,212,192,0.7));
+      z-index: 1;
+    }
+
+    /* Main Container */
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: #fff;
+      max-width: 90%;
+      margin: 0 auto;
+    }
+
+    /* Logo */
+    .logo img {
+      max-width: 220px; /* Increased logo size */
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    /* Preloader Animation */
+    .preloader {
+      margin-bottom: 30px;
+    }
+
+    .spinner {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .spinner svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .spinner .ring {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.2);
+      stroke-width: 4;
+    }
+
+    .spinner .ball {
+      fill: #83d4c0; /* Changed ball color */
+      stroke: none;
+      transform-origin: 40px 40px; /* Center of the spinner */
+      animation: ballRotate 1.5s linear infinite;
+    }
+
+    /* Headings and Text */
+    h1 {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      animation: fadeInUp 1s ease-in-out forwards;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      animation: fadeInUp 1s ease-in-out forwards;
+      animation-delay: 0.3s;
+    }
+
+    /* Style for the message */
+    .message {
+      color: #1f3c4e; /* Changed text color */
+    }
+
+    /* Style for the note */
+    .note {
+      font-size: 1em;
+      color: #ff6663; /* Changed text color */
+      font-weight: bold;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes ballRotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+      
+      p {
+        font-size: 1em;
+      }
+
+      .spinner {
+        width: 60px;
+        height: 60px;
+      }
+
+      .spinner .ball {
+        transform-origin: 30px 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5em;
+      }
+      
+      p {
+        font-size: 0.9em;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+      }
+
+      .spinner .ball {
+        transform-origin: 25px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Image with Gradient Overlay -->
+  <div class="hero">
+    <div class="overlay"></div>
+    <!-- Main Content Container -->
+    <div class="container">
+      <!-- Company Logo -->
+      <div class="logo">
+        <img src="https://139550101.fs1.hubspotusercontent-eu1.net/hub/139550101/hubfs/TaxMate_Full_Logo_Regular-2.png" alt="Company Logo" />
+      </div>
+      <!-- Preloader Animation -->
+      <div class="preloader" aria-hidden="true">
+        <!-- SVG Spinner -->
+        <div class="spinner">
+          <svg viewBox="0 0 80 80">
+            <circle class="ring" cx="40" cy="40" r="36"></circle>
+            <circle class="ball" cx="40" cy="4" r="6"></circle>
+          </svg>
+        </div>
+      </div>
+      <!-- Heading and Messages -->
+      <h1>Redirecting to Payment</h1>
+      <p class="message">Please wait while we process your request.</p>
+      <p class="note">Do not refresh or close this window.</p>
+    </div>
+  </div>
+
+  <!-- JavaScript for Redirection -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const contactId = urlParams.get('contact_id');
+      const companyId = urlParams.get('company_id');
+
+      // Determine which ID to use
+      const idParam = contactId ? `contact_id=${contactId}` : `company_id=${companyId}`;
+
+      if (contactId || companyId) {
+        // Redirect the browser to /create-payment directly
+        window.location.href = `/create-payment?${idParam}`;
+      } else {
+        console.error('No valid Contact ID or Company ID provided.');
+        alert('Invalid request. Please provide a valid Contact ID or Company ID.');
+      }
+    });
+  </script>
+</body>
+</html>
