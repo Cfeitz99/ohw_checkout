@@ -220,23 +220,26 @@
   </div>
 
   <!-- JavaScript for Redirection -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const contactId = urlParams.get('contact_id');
-      const companyId = urlParams.get('company_id');
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const contactId = urlParams.get('contact_id');
+    const companyId = urlParams.get('company_id');
+    const productIds = urlParams.get('product_ids');
 
-      // Determine which ID to use
-      const idParam = contactId ? `contact_id=${contactId}` : `company_id=${companyId}`;
+    if (!productIds) {
+        console.error('No Product IDs provided.');
+        alert('Invalid request. Please provide valid Product IDs.');
+        return;
+    }
 
-      if (contactId || companyId) {
-        // Redirect the browser to /create-payment directly
-        window.location.href = `/create-payment?${idParam}`;
-      } else {
+    const idParam = contactId ? `contact_id=${contactId}` : `company_id=${companyId}`;
+    if (contactId || companyId) {
+        window.location.href = `/create-ohw-payment?${idParam}&product_ids=${productIds}`;
+    } else {
         console.error('No valid Contact ID or Company ID provided.');
         alert('Invalid request. Please provide a valid Contact ID or Company ID.');
-      }
-    });
-  </script>
-</body>
-</html>
+    }
+});
+</script>
+
