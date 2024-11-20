@@ -41,66 +41,55 @@ app.get('/waiting-for-payment', (req, res) => {
   res.sendFile(path.join(__dirname, 'waiting-for-payment.html'));
 });
 
-// Endpoint to create OHW Mollie payment
 app.get('/create-ohw-payment', async (req, res) => {
-  const contactId = req.query.contact_id;
-  const companyId = req.query.company_id;
-  const productIds = req.query.product_ids?.split(',') || []; // Accept product IDs as a comma-separated list
+    const contactId = req.query.contact_id;
+    const companyId = req.query.company_id;
+    const productIds = req.query.product_ids;
 
-  try {
-    if (!contactId && !companyId) {
-      throw new Error('No contact ID or company ID provided');
+    try {
+        if (!contactId && !companyId) {
+            throw new Error('No contact ID or company ID provided');
+        }
+        if (!productIds) {
+            throw new Error('No product IDs provided');
+        }
+
+        console.log(`Received request with contact_id: ${contactId}, company_id: ${companyId}, product_ids: ${productIds}`);
+
+        // Get the access token
+        const accessToken = await getAccessToken();
+        if (!accessToken) {
+            return res.status(500).send('Failed to authenticate with FastAPI service');
+        }
+
+        const idParam = contactId ? `contact_id=${contactId}` : `company_id=${companyId}`;
+        const fastApiUrl = `${fastApiBaseUrl}/mollie/generate/url/ohw?${idParam}`;
+        const payload = productIds.split(',').map(id => id.trim()); // Convert product IDs into an array
+
+        console.log(`Making request to FastAPI URL: ${fastApiUrl} with payload: ${JSON.stringify(payload)}`);
+
+        // Make the request without following redirects
+        const response = await axios.post(fastApiUrl, payload, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.status === 200 && response.data?.checkout_url) {
+            const checkoutUrl = response.data.checkout_url;
+            console.log(`Redirecting to Mollie payment URL: ${checkoutUrl}`);
+            return res.redirect(checkoutUrl);
+        } else {
+            console.error('Unexpected response from FastAPI service:', response.status);
+            return res.status(500).send('Error generating payment URL');
+        }
+    } catch (error) {
+        console.error('Error in /create-ohw-payment:', error.message);
+        return res.status(500).send(`Error creating payment: ${error.message}`);
     }
-
-    if (productIds.length === 0) {
-      throw new Error('No product IDs provided');
-    }
-
-    console.log(`Received request with contact_id: ${contactId}, company_id: ${companyId}, product_ids: ${productIds}`);
-
-    // Get the access token
-    const accessToken = await getAccessToken();
-    if (!accessToken) {
-      return res.status(500).send('Failed to authenticate with FastAPI service');
-    }
-
-    // Construct the URL for the API call
-    const queryParams = new URLSearchParams({
-      ...(contactId && { contact_id: contactId }),
-      ...(companyId && { company_id: companyId }),
-    }).toString();
-
-    const fastApiUrl = `${ohwBaseUrl}/mollie/generate/url/ohw?${queryParams}`;
-
-    console.log(`Making POST request to FastAPI URL: ${fastApiUrl}`);
-
-    // Make the POST request with the product IDs as payload
-    const response = await axios.post(
-      fastApiUrl,
-      productIds, // Payload containing product IDs
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    if (response.status === 200 && response.data && response.data.payment_url) {
-      const checkoutUrl = response.data.payment_url;
-      console.log(`Received Mollie payment URL: ${checkoutUrl}`);
-
-      // Redirect the user to the Mollie payment URL
-      return res.redirect(checkoutUrl);
-    } else {
-      console.error('Unexpected response from FastAPI service:', response.status, response.data);
-      return res.status(500).send('Error generating payment URL');
-    }
-  } catch (error) {
-    console.error('Error in /create-ohw-payment:', error.message);
-    return res.status(500).send(`Error creating payment: ${error.message}`);
-  }
 });
+
 
 // Start the server
 app.listen(port, () => {
